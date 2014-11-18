@@ -52,3 +52,9 @@ void Car::set_acceleration(float acceleration){
 void Car::set_lane(unsigned char new_lane){
     lane = new_lane;
 }
+
+void Car::set_state(float position, float speed, float acceleration){
+    current_position = position;
+    current_speed = speed;
+    current_acceleration = acceleration;
+}

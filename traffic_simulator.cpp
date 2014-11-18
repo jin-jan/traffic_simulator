@@ -1,5 +1,12 @@
+#include <vector>
+#include <map>
+#include <cmath>
 
-float heuristic(State *acc_state, State *dec_state)
+#include "car.hpp"
+
+const float PI = 3.14159265359;
+
+float heuristic(std::vector<Car>& acc_states)
 {
     /*
     TODO: add pothele heuristic
@@ -29,14 +36,25 @@ float heuristic(State *acc_state, State *dec_state)
             *c-lane                               20%
                TODO: find relationship
             *h = a? + bv + c?
+
+    std::pair<float, Car *> best_option(0.0, nullptr);
+    for(auto state: acc_states){
+        float distance_to_next_car;
+        float position = state.get_position() / state.get_goal_position();
+        float d;
+        float weight = 0.35 + 0.30 + 0.20 + 0.10 + 0.05;
+
+    }
     */
+    return 0.0;
 }
 
-foat transition()
+float transition()
 {
     /*
      TODO: investigate average acceleration
     */
+    return 0.0;
 }
 
 float traffic_simulation()
@@ -48,9 +66,29 @@ float traffic_simulation()
         *Update current state
     Setup for next iteration (traffic lights, pothele)
     */
+    return 0.0;
 }
 
-int main (args, argv)
-{
+std::pair<std::vector<Car>, std::vector<Car> > transition_function(Car state){
+    std::pair<std::vector<Car>, std::vector<Car> > result;
+    float x = state.get_speed() / state.get_top_speed();
+    int top_acceleration = (int)(state.get_top_acceleration()*std::cos(x*(PI/2)));
 
+    // acceleration
+    int acceleration = (int) state.get_acceleration();
+    for(; acceleration < top_acceleration; acceleration++){
+        Car new_state(state);
+        // time = 1 second
+        float new_speed = state.get_speed() + acceleration;
+        float new_position = state.get_position() + state.get_speed() + 0.5*acceleration;
+        new_state.set_speed(new_speed);
+        new_state.set_position(new_position);
+        new_state.set_acceleration(acceleration);
+        // TODO: lane
+        result.first.push_back(new_state);
+    }
+
+    // TODO: deceleration
+
+    return result;
 }

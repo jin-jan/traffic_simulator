@@ -4,36 +4,22 @@
 #include <iostream>
 
 #include "car.hpp"
-
-const float PI = 3.14159265359;
-std::pair<std::vector<Car>, std::vector<Car> > transition_function(Car state);
+#include "traffic_simulator.hpp"
 
 int main(){
     std::cout << "hello world" << std::endl;
-    return 0;
-}
+    Car a_car;
+    std::pair<std::vector<Car>, std::vector<Car> > next_states;
 
-std::pair<std::vector<Car>, std::vector<Car> > transition_function(Car state){
-    std::pair<std::vector<Car>, std::vector<Car> > result;
-    float x = state.get_speed() / state.get_top_speed();
-    int top_acceleration = (int)(state.get_top_acceleration()*std::cos(x*(PI/2)));
+    next_states = transition_function(a_car);
 
-    // acceleration
-    int acceleration = (int) state.get_acceleration();
-    for(; acceleration < top_acceleration; acceleration++){
-        Car new_state(state);
-        // time = 1 second
-        float new_speed = state.get_speed() + acceleration;
-        float new_position = state.get_position() + state.get_speed() + 0.5*acceleration;
-        new_state.set_speed(new_speed);
-        new_state.set_position(new_position);
-        new_state.set_acceleration(acceleration);
-        // TODO: lane
-        result.first.push_back(new_state); 
+    auto iter = next_states.first.begin();
+    auto end = next_states.first.end();
+    for(;iter != end; iter++){
+        std::cout << "x= " << iter->get_position()
+                  << " v= " << iter->get_speed()
+                  << " a= " << iter->get_acceleration() << std::endl;
     }
 
-    // TODO: deceleration
-
-    return result;
+    return 0;
 }
-

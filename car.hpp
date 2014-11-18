@@ -13,9 +13,10 @@ class Car{
         void set_position(float position);
         void set_acceleration(float acceleration);
         void set_lane(unsigned char new_lane);
+        void set_state(float position, float speed, float acceleration);
 
     private:
-        unsigned int id;                 
+        unsigned int id;
         unsigned int top_speed;              // in cm/s
         float top_acceleration;
         unsigned int car_length;             // in cm
