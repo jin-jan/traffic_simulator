@@ -10,6 +10,42 @@
 #include "car.hpp"
 #include "traffic_simulator.hpp"
 
+/*
+Rationale of the default configuration:
+top_speed          =   60 km/h
+                   = 1667 cm/s
+    Defined by the law of ZMG
+
+top_acceleration   =  449 cm/s2
+    Available performance measure states that the time it takes to accelerate
+    from 0 to 97 km/h takes 6 seconds
+
+car_length         =  400 cm
+    Medium-sized cars approach 4.8 metres and often exceed this.
+    In the simulation we considered +/- 100 cm to include small and large sized
+    cars
+
+total_cars         = 2500
+    Random initialization of cars
+
+lane               =    2
+    Av. Lopez Mateos has two main lanes
+
+goal_distance      =   10.4 km
+    The simulation starts in the intersection between Periferico Sur and
+    Av. Lopez Mateos and ends in the intersection between Av. Americas and
+    Av. Lopez Materos
+
+total_sem          =    0
+    WIP
+
+sem_sim            =    0
+    WIP: simulation of different sempaphore algorithms
+
+total_pot          =    0
+    WIP
+*/
+
 void helpOutput(void)
 {
     std::cout << "traffic simulation\n"
@@ -25,16 +61,20 @@ void helpOutput(void)
 void defaultConfig(void)
 {
     std::cout << "Default configuration:\n"
-                         "    number of cars:       2500\n"         //car_length
-                     "    max speed:            1667 cm/s\n"    //top_speed
-                     "    max acceleration:     449 cm/s2\n"  //top_acceleration
-                     "    number of semaphores:   0\n"
-                     "    semaphore simulation:   0\n"
-                     "    number of potheles:     0\n"
+                 "    number of cars:      2500\n"
+                 "    car length:           400 cm\n"      //car_length
+                 "    max speed:             60 km/h\n"    //top_speed
+                 "    max acceleration:     449 cm/s2\n"   //top_acceleration
+                 "    number of semaphores:   0\n"
+                 "    semaphore simulation:   0\n"
+                 "    number of potheles:     0\n"
+                 "    goal distance:         10.4km\n"
+                 "    lane:                   2\n"
                      <<  std::endl;
     exit(EXIT_FAILURE);
 }
 
+/*
 void carSim(void)
 {
     Car a_car;
@@ -49,7 +89,7 @@ void carSim(void)
                   << "v= " << iter->get_speed()
                   << "a= " << iter->get_acceleration() << std::endl;
     }
-}
+}*/
 
 int main(int argc, char **argv){
     int opt;
