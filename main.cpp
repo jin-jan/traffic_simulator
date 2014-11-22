@@ -9,6 +9,7 @@
 
 #include "car.hpp"
 #include "traffic_simulator.hpp"
+#include "current_car_state.hpp"
 
 /*
 Rationale of the default configuration:
@@ -74,10 +75,10 @@ void defaultConfig(void)
     exit(EXIT_FAILURE);
 }
 
-/*
+
 void carSim(void)
 {
-    Car a_car;
+    Car a_car(60, 449, 4000, 10, 0);
     std::pair<std::vector<Car>, std::vector<Car> > next_states;
 
     next_states = transition_function(a_car);
@@ -85,11 +86,18 @@ void carSim(void)
     auto iter = next_states.first.begin();
     auto end = next_states.first.end();
     for(;iter != end; iter++){
-        std::cout << "x= " << iter->get_position()
-                  << "v= " << iter->get_speed()
-                  << "a= " << iter->get_acceleration() << std::endl;
+        std::cout << "x=" << iter->get_position()
+                  << " v=" << iter->get_speed()
+                  << " a=" << iter->get_acceleration() << std::endl;
     }
-}*/
+    
+    CarState new_state = heuristic(next_states.first);
+    std::cout << std::endl
+              << "best option:" << std::endl
+              << "x=" << new_state.get_position()
+              << " v=" << new_state.get_speed()
+              << " a=" << new_state.get_acceleration() << std::endl;
+}
 
 int main(int argc, char **argv){
     int opt;
@@ -124,6 +132,6 @@ int main(int argc, char **argv){
                 exit(EXIT_FAILURE);
         }
     }
-
+    carSim();
     return 0;
 }

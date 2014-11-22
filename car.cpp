@@ -10,10 +10,10 @@ Car::Car(unsigned int top_speed,
          float goal_distance,
          unsigned char lane){
 
-    this->top_speed = top_speed;               // cm/s
+    this->top_speed = top_speed*(1000/36);     // cm/s
     this->top_acceleration = top_acceleration; // cm/s2
     this->car_length = car_length;             // cm
-    this->goal_distance = goal_distance;       // cm
+    this->goal_distance = goal_distance*(100000);    // cm
     this->lane = lane;
     current_speed = 0;
     current_position = 0;

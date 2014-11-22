@@ -3,10 +3,11 @@
 #include <cmath>
 
 #include "car.hpp"
+#include "current_car_state.hpp"
 
 const float PI = 3.14159265359;
 
-float heuristic(std::vector<Car>& acc_states)
+CarState heuristic(std::vector<Car>& acc_states)
 {
     /*
     TODO: add pothele heuristic
@@ -36,17 +37,24 @@ float heuristic(std::vector<Car>& acc_states)
             *c-lane                               20%
                TODO: find relationship
             *h = a? + bv + c?
-
-    std::pair<float, Car *> best_option(0.0, nullptr);
-    for(auto state: acc_states){
-        float distance_to_next_car;
-        float position = state.get_position() / state.get_goal_position();
-        float d;
-        float weight = 0.35 + 0.30 + 0.20 + 0.10 + 0.05;
-
-    }
     */
-    return 0.0;
+
+    std::pair<float, CarState> best_state = std::make_pair(0.0, CarState(0.0, 0.0, 0.0));
+    for(std::vector<Car>::iterator state = acc_states.begin(); state != acc_states.end(); state++){
+        //float distance_to_next_car;
+        float position = state->get_position();
+        float speed = state->get_speed() / state->get_top_speed();
+
+        float weight = 0.30*position + 0.10*speed;
+        //float weight = 0.35 + 0.30 + 0.20 + 0.10 + 0.05;
+
+        if(weight > best_state.first){
+            best_state.first = weight;
+            best_state.second = CarState(state->get_position(), state->get_speed(), state->get_acceleration());
+        }
+    }
+
+    return best_state.second;
 }
 
 float transition()
