@@ -6,10 +6,12 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <limits>
 
 #include "car.hpp"
 #include "traffic_simulator.hpp"
 #include "current_car_state.hpp"
+
 
 /*
 Rationale of the default configuration:
@@ -53,7 +55,9 @@ void helpOutput(void)
                  "USAGE: simulation [OPTIONS]\n"
                  "OPTIONS:\n"
                  "-c CARS    Set the number of CARS to simulate\n"
-                 "-s SPEED   Set the maximun SPEED (cm/s)\n"
+                 "-s SPEED   Set the maximun SPEED (km/h)\n"
+                 "-d GOAL    Set the goal distance km\n"
+                 "-l LANE    Set the number of lanes\n"
                  "-t LIGHT   Set the number of traffic LIGHTs to simulate\n"
                  "-p POTHELE Set the number of POTHELEs to simulate\n"
                  "-h         Display the help information\n" << std::endl;
@@ -76,9 +80,12 @@ void defaultConfig(void)
 }
 
 
-void carSim(void)
+void car_simulation(float top_speed,
+                    float goal_distance,
+                    char lane)
 {
-    Car a_car(60, 449, 4000, 10, 0);
+
+    Car a_car(top_speed, goal_distance, lane);
     std::pair<std::vector<Car>, std::vector<Car> > next_states;
 
     next_states = transition_function(a_car);
@@ -90,20 +97,29 @@ void carSim(void)
                   << " v=" << iter->get_speed()
                   << " a=" << iter->get_acceleration() << std::endl;
     }
-    
+
     CarState new_state = heuristic(next_states.first);
     std::cout << std::endl
               << "best option:" << std::endl
               << "x=" << new_state.get_position()
               << " v=" << new_state.get_speed()
               << " a=" << new_state.get_acceleration() << std::endl;
+    std::cout.precision(5);
+    std::cout << "get_top_speed:" << a_car.get_top_speed() << "\n"
+              << "get_goal_distance:" << a_car.get_goal_distance() << "\n"
+              << "get_lane:" <<  a_car.get_lane() << "\n" << std::endl;
 }
 
 int main(int argc, char **argv){
     int opt;
-    char *num_cars, *num_sem, *num_po, *set_speed;
+    float set_speed         =   60; //top_speed
+    float set_goal_distance =   10.4; //goal_distance
+    int set_lane            =    0; //lane
+    unsigned char num_sem   =    0;
+    unsigned char num_po    =    0;
+    int num_cars  = 2500;
 
-    while ((opt = getopt(argc, argv, "hc:s:t:p:")) !=  -1)
+    while ((opt = getopt(argc, argv, "hc:s:d:l:t:p:")) !=  -1)
     {
         switch (opt)
         {
@@ -112,26 +128,38 @@ int main(int argc, char **argv){
                 defaultConfig();
                 break;
             case 'c':
-                num_cars = optarg;
-                std::cout << "c value: " << num_cars << std::endl;
+                num_cars = static_cast<unsigned char>(*optarg);
+                std::cout << "-c  " << num_cars << std::endl;
                 break;
             case 's':
-                set_speed = optarg;
-                std::cout << "s value:" << set_speed << std::endl;
+                set_speed = atof(optarg);
+                std::cout << "-s " << set_speed << std::endl;
+                break;
+            case 'd':
+                set_goal_distance = atof(optarg);
+                std::cout << "-d " << set_goal_distance << std::endl;
+                break;
+            case 'l':
+                set_lane = atoi(optarg);
+                std::cout << "-l " << set_lane << std::endl;
                 break;
             case 't':
-                num_sem = optarg;
-                std::cout << "t value:" << num_sem << std::endl;
+                num_sem = static_cast<unsigned char>(*optarg);
+                std::cout << "-t" << num_sem << std::endl;
                 break;
             case 'p':
-                num_po = optarg;
-                std::cout << "p value" << num_po << std::endl;
+                num_po = static_cast<unsigned char>(*optarg);
+                std::cout << "-p " << num_po << std::endl;
                 break;
             default:
-                fprintf(stderr, "Usage: %s [-c] [-s] [-t] [-p] [-h]", argv[0]);
+                fprintf(stderr, "Usage: %s [-c] [-s] [-d] [-l] [-t] [-p] [-h]",
+                        argv[0]);
                 exit(EXIT_FAILURE);
         }
     }
-    carSim();
+    car_simulation(set_speed,
+                   set_goal_distance,
+                   set_lane);
+
     return 0;
 }

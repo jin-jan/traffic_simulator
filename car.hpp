@@ -3,11 +3,9 @@
 
 class Car{
     public:
-        Car(unsigned int top_speed,
-            float top_acceleration,
-            unsigned int car_length,
+        Car(float top_speed,
             float goal_distance,
-            unsigned char lane);
+            int lane);
         float get_top_speed();
         float get_top_acceleration();
         float get_speed();
@@ -27,13 +25,13 @@ class Car{
 
     private:
         unsigned int id;
-        unsigned int top_speed;              // in cm/s
+        float top_speed;              // in cm/s
         float top_acceleration;
         unsigned int car_length;             // in cm
         float current_speed;
         float current_position;
         float current_acceleration;
-        unsigned char lane;
+        int lane;
         float goal_distance;
 };
 
