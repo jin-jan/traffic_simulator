@@ -14,6 +14,7 @@ class Car{
         float get_car_length();
         float get_goal_distance();
         float get_lane();
+        float get_rear_position();
         void set_speed(float speed);
         void set_position(float position);
         void set_acceleration(float acceleration);

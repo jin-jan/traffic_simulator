@@ -50,6 +50,10 @@ float Car::get_lane(){
     return lane;
 }
 
+float Car::get_rear_position(){
+    return current_position-car_length;
+}
+
 void Car::set_speed(float speed){
     current_speed = speed;
 }

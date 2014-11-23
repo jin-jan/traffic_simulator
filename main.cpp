@@ -88,14 +88,28 @@ void car_simulation(float top_speed,
     Car a_car(top_speed, goal_distance, lane);
     std::pair<std::vector<Car>, std::vector<Car> > next_states;
 
-    next_states = transition_function(a_car);
+    for(int i=0; i<5; i++){
 
-    auto iter = next_states.first.begin();
-    auto end = next_states.first.end();
-    for(;iter != end; iter++){
-        std::cout << "x=" << iter->get_position()
-                  << " v=" << iter->get_speed()
-                  << " a=" << iter->get_acceleration() << std::endl;
+        next_states = transition_function(a_car);
+
+        auto iter = next_states.first.begin();
+        auto end = next_states.first.end();
+        for(;iter != end; iter++){
+            std::cout << "x=" << iter->get_position()
+                      << " v=" << iter->get_speed()
+                      << " a=" << iter->get_acceleration() << std::endl;
+        }
+        
+        CarState new_state = heuristic(next_states.first);
+        std::cout << std::endl
+                  << "best option:" << std::endl
+                  << "x=" << new_state.get_position()
+                  << " v=" << new_state.get_speed()
+                  << " a=" << new_state.get_acceleration() << std::endl;
+
+        a_car.set_state( new_state.get_position(),
+                         new_state.get_speed(),
+                         new_state.get_acceleration());
     }
 
     CarState new_state = heuristic(next_states.first);
