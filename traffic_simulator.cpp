@@ -18,7 +18,7 @@ float get_safe_distance(float speed){
 }
 
 bool car_crashes(Car *current, Car *in_front){
-	if (in_front == nullptr)
+	if (in_front == nullptr || current == nullptr)
 		return false;
 
     float distance_to_car = in_front->get_rear_position()-current->get_position();
@@ -54,34 +54,7 @@ CarState heuristic(std::vector<Car>& new_states,
 {
     /*
     TODO: add pothele heuristic
-
-    Calculate new velocity
-    Calculate new position
-    Calculate new lane
-
-    for all states
-        if is_acc
-            *a-distance to car in front           35%
-                TODO: find relationship
-            *b-total distance:                    30%
-                x = x-actual/x-goal
-            *c-relation % v-actual/x-goal         20%
-                TODO: find relationship
-            *d-velocity:                          10%
-                v = v-actual/v-goal
-            *e-lane                               5%
-                TODO: find relationship
-            *h = a? + bx + c? + e?
-        else
-            *a-distance to car in front           50%
-               TODO: find relationship
-            *b-velocity: v-actual/v-goal          30%
-                v = v-actual/v-goal
-            *c-lane                               20%
-               TODO: find relationship
-            *h = a? + bv + c?
     */
-
     if (new_states.empty()){
         std::cerr << "ERROR: there are no new states" << std::endl;
         std::exit(-1);
@@ -96,22 +69,30 @@ CarState heuristic(std::vector<Car>& new_states,
         float speed_ratio = 0.0;
         float position_ratio = 0.0;
 
-        if(stay_in_current_lane){
-            if(exceed_top_speed || car_crashes(car, car_in_front_current))
-                continue;
-            //extra point for staying in the same lane
-            factor += 0.05;
-        }else{
-            if(is_safe_change_lane(car_in_back, car, car_in_front) && !exceed_top_speed)
-                continue;
+        // make sure new state is "safe"
+        if(exceed_top_speed){
+            if(state->get_id() == 2){
+                std::cout << "id 2 reject speed ";
+                state->print_state();
+            }
+            continue;
         }
+
+        if(stay_in_current_lane)
+            if(car_crashes(car, car_in_front_current))
+                continue;
+            else
+                //extra points for staying in the same lane
+                factor += 0.05;
+        else if (!is_safe_change_lane(car_in_back, car, car_in_front))
+            continue;
+        
 
         speed_ratio = state->get_speed() / car->get_top_speed();
         position_ratio = state->get_position() / car->get_goal_distance();
         weight = factor*(speed_ratio+position_ratio);
 
         // is this state better than the previous one
-        weight *= factor;
         if(weight > best_state.first){
             best_state.first = weight;
             best_state.second = CarState(state->get_position(),
@@ -149,50 +130,28 @@ float traffic_simulation()
     return 0.0;
 }
 
-std::pair<std::vector<Car>, std::vector<Car> > transition_function(Car state){
-    std::pair<std::vector<Car>, std::vector<Car> > result;
+std::pair<std::vector<Car>, std::vector<Car>> transition_function(Car state){
+    std::pair<std::vector<Car>, std::vector<Car>> result;
     float x = state.get_speed() / state.get_top_speed();
     int top_acceleration = (int)(state.get_top_acceleration()*std::cos(x*(PI/2)));
+    int botton_acceleration = -700;
 
-    // acceleration
-    int acceleration = (int) state.get_acceleration();
 
-    if(acceleration >= top_acceleration){
-         for(; acceleration >= top_acceleration; acceleration--){
-            Car new_state(state);
-            // time = 1 second
-            float new_speed = state.get_speed() + acceleration;
-            float new_position = state.get_position() + state.get_speed() + 0.5*acceleration;
-            new_state.set_speed(new_speed);
-            new_state.set_position(new_position);
-            new_state.set_acceleration(acceleration);
-            
-            new_state.set_lane(0);
-            result.first.push_back(new_state);
+    for(int acceleration = botton_acceleration; acceleration < top_acceleration; acceleration++){
+        Car new_state(state);
+        // time = 1 second
+        float new_speed = state.get_speed() + acceleration;
+        float new_position = state.get_position() + state.get_speed() + 0.5*acceleration;
+        new_state.set_speed(new_speed);
+        new_state.set_position(new_position);
+        new_state.set_acceleration(acceleration);
+        
+        new_state.set_lane(0);
+        result.first.push_back(new_state);
 
-            new_state.set_lane(1);
-            result.first.push_back(new_state);
-        }
-    }else{
-        for(; acceleration < top_acceleration; acceleration++){
-            Car new_state(state);
-            // time = 1 second
-            float new_speed = state.get_speed() + acceleration;
-            float new_position = state.get_position() + state.get_speed() + 0.5*acceleration;
-            new_state.set_speed(new_speed);
-            new_state.set_position(new_position);
-            new_state.set_acceleration(acceleration);
-            
-            new_state.set_lane(0);
-            result.first.push_back(new_state);
-
-            new_state.set_lane(1);
-            result.first.push_back(new_state);
-        }
+        new_state.set_lane(1);
+        result.first.push_back(new_state);
     }
-
-
-    // TODO: deceleration
 
     return result;
 }

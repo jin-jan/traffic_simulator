@@ -3,17 +3,18 @@
 
 class CarState{
     public:
-        CarState(float position, float speed, float acceleration, unsigned char lane);
+        CarState(float position, float speed, float acceleration, unsigned int lane);
         float get_position();
         float get_speed();
         float get_acceleration();
-        unsigned char get_lane();
+        unsigned int get_lane();
+        void print_state();
     
     private:
         float speed;
         float position;
         float acceleration;
-        unsigned char lane;
+        unsigned int lane;
 };
 
 #endif

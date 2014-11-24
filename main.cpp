@@ -79,73 +79,86 @@ void defaultConfig(void)
     exit(EXIT_FAILURE);
 }
 
-void print_car_state(Car &car){
-    std::cout << std::endl
-              << "id " << car.get_id()
-              << " x=" << car.get_position()
-              << " v=" << car.get_speed()
-              << " a=" << car.get_acceleration() << std::endl;
+void switch_lane(Car car, std::deque<Car>& lane){
+    std::deque<Car> slower_cars;
 
-    std::cout.precision(5);
-    std::cout << "get_top_speed:" << car.get_top_speed() << "\n"
-              << "get_goal_distance:" << car.get_goal_distance() << "\n"
-              << "get_lane:" <<  car.get_lane() << "\n" << std::endl;
+    while(!lane.empty()){
+        Car last_car = lane.back();
+        if(car.get_position() > last_car.get_position()){
+            lane.push_back(car);
+            break;
+        }else{
+            slower_cars.push_back(last_car);
+            lane.pop_back();
+        }
+    }
+
+    while(!slower_cars.empty()){
+        lane.push_back(slower_cars.back());
+        slower_cars.pop_back();
+    }
 }
-
 
 void car_simulation(std::deque<Car> &lane0, std::deque<Car> &lane1)
 {
 	std::deque<Car> future_lane0;
 	std::deque<Car> future_lane1;
 
-	for(int i=0; i < 5; i++){
-            while(!lane0.empty() || !lane1.empty()){
-                    std::pair<std::vector<Car>, std::vector<Car> > next_states;
+    for(int i=0; i<5; i++){
+        while(!lane0.empty() || !lane1.empty()){
+            std::pair<std::vector<Car>, std::vector<Car> > next_states;
 
-                    if(!lane0.empty()){
-                            Car car = lane0.front();
-                            lane0.pop_front();
-                            Car *in_front = future_lane0.empty() ? nullptr : &future_lane0.back();
-                            Car *future_in_front = future_lane1.empty() ? nullptr : &future_lane1.back();
-                            Car *future_in_back = lane1.empty() ? nullptr : &lane1.front();
+            if(!lane0.empty()){
+                Car car = lane0.front();
+                lane0.pop_front();
+                Car *in_front = future_lane0.empty() ? nullptr : &future_lane0.back();
+                Car *future_in_front = future_lane1.empty() ? nullptr : &future_lane1.back();
+                Car *future_in_back = lane1.empty() ? nullptr : &lane1.front();
 
-                            next_states = transition_function(car);
-                            CarState new_state = heuristic(next_states.first,
-                                                           &car,
-                                                           in_front,
-                                                           future_in_front,
-                                                           future_in_back);
-                            car.set_car_state(new_state);
-                            if(new_state.get_lane() == 0)
-                                    future_lane0.push_back(car);
-                            else
-                                    future_lane1.push_back(car);
-                            print_car_state(car);
-                    }
-
-                    if(!lane1.empty()){
-                            Car car = lane1.front();
-                            lane1.pop_front();
-                            Car *in_front = future_lane1.empty() ? nullptr : &future_lane1.back();
-                            Car *future_in_front = future_lane0.empty() ? nullptr : &future_lane0.back();
-                            Car *future_in_back = lane0.empty() ? nullptr : &lane0.front();
-
-                            next_states = transition_function(car);
-                            CarState new_state = heuristic(next_states.first,
-                                                           &car,
-                                                           in_front,
-                                                           future_in_front,
-                                                           future_in_back);
-                            car.set_car_state(new_state);
-                            if(new_state.get_lane() == 0)
-                                    future_lane0.push_back(car);
-                            else
-                                    future_lane1.push_back(car);
-                            print_car_state(car);
-                    }
+                next_states = transition_function(car);
+                CarState new_state = heuristic(next_states.first,
+                                               &car,
+                                               in_front,
+                                               future_in_front,
+                                               future_in_back);
+                car.set_car_state(new_state);
+                if(new_state.get_lane() == 0)
+                    future_lane0.push_back(car);
+                else
+                    switch_lane(car, future_lane1);
+                    //future_lane1.push_back(car);
+                car.print_state();
             }
-		}
-        
+
+            if(!lane1.empty()){
+                Car car = lane1.front();
+                lane1.pop_front();
+                Car *in_front = future_lane1.empty() ? nullptr : &future_lane1.back();
+                Car *future_in_front = future_lane0.empty() ? nullptr : &future_lane0.back();
+                Car *future_in_back = lane0.empty() ? nullptr : &lane0.front();
+
+                next_states = transition_function(car);
+                CarState new_state = heuristic(next_states.first,
+                                               &car,
+                                               in_front,
+                                               future_in_front,
+                                               future_in_back);
+                car.set_car_state(new_state);
+                if(new_state.get_lane() == 0)
+                    switch_lane(car, future_lane0);
+                    //future_lane0.push_back(car);
+                else
+                    future_lane1.push_back(car);
+                car.print_state();
+            }
+
+        }
+        // prepare for next iteration
+        lane0 = future_lane0;
+        lane1 = future_lane1;
+        future_lane0.clear();
+        future_lane1.clear();
+    }
 }
 
 
@@ -199,15 +212,17 @@ int main(int argc, char **argv){
 
     std::deque<Car> lane0;
     std::deque<Car> lane1;
-    Car slow(50, 10, 0);
-    Car fast(60, 10, 0);
+    Car slow(20, 10, 0);
+    Car fast(50, 10, 0);
+    Car m(60, 10, 0);
 
-    print_car_state(slow);
-    print_car_state(fast);
+    slow.print_state();
+    fast.print_state();
+    m.print_state();
 
     lane0.push_back(slow);
     lane0.push_back(fast);
-
+    lane0.push_back(m);
     car_simulation(lane0, lane1);
 
     return 0;
