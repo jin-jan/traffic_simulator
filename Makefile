@@ -1,5 +1,5 @@
 CC = g++
-FLAGS = -Wall -Werror -std=c++0x
+FLAGS = -Wall -Werror -std=c++0x -g
 
 SOURCES = main.cpp car.cpp
 
