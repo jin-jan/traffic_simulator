@@ -5,17 +5,19 @@
 #include "car.hpp"
 
 Car::Car(float top_speed,
-         float goal_distance,
-         int lane){
+         float start_distance,
+         float goal_distance){
 
     this->top_speed = (top_speed*1000)/36;         // cm/s
     this->top_acceleration = 449;     // cm/s2
     this->car_length = 400;                        // cm
     this->goal_distance = goal_distance*(100000);  // cm
     this->lane = lane;
+    this->start_distance = 0;
     current_speed = 0;
     current_position = 0;
     current_acceleration = 0;
+
 }
 
 float Car::get_top_speed(){
@@ -50,6 +52,10 @@ float Car::get_lane(){
     return lane;
 }
 
+float Car::get_start_distance(){
+    return start_distance;
+}
+
 void Car::set_speed(float speed){
     current_speed = speed;
 }
@@ -82,4 +88,8 @@ void Car::set_car_length(float new_length){
 
 void Car::set_goal_distance(float new_distance){
     goal_distance = new_distance;
+}
+
+void Car::set_start_distance(float new_distance){
+    start_distance = new_distance;
 }

@@ -1,11 +1,16 @@
 #ifndef CAR_H
 #define CAR_H
 
+#define NUM_EN_ALL 9
+#define NUM_EX_ALL 11
+#define NUM_EN_PRO NUM_EX_PRO 13
+
+
 class Car{
     public:
         Car(float top_speed,
-            float goal_distance,
-            int lane);
+            float start_distance,
+            float goal_distance);
         float get_top_speed();
         float get_top_acceleration();
         float get_speed();
@@ -14,6 +19,7 @@ class Car{
         float get_car_length();
         float get_goal_distance();
         float get_lane();
+        float get_start_distance();
         void set_speed(float speed);
         void set_position(float position);
         void set_acceleration(float acceleration);
@@ -22,6 +28,7 @@ class Car{
         void set_top_speed(float new_top_speed);
         void set_car_length(float new_length);
         void set_goal_distance(float new_distance);
+        void set_start_distance(float new_distance);
 
     private:
         unsigned int id;
@@ -33,6 +40,7 @@ class Car{
         float current_acceleration;
         int lane;
         float goal_distance;
+        float start_distance;
 };
 
 #endif
