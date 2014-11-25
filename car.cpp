@@ -1,12 +1,13 @@
 #include <string>
 #include <vector>
 #include <cmath>
+#include <iostream>
 
 #include "car.hpp"
 
 Car::Car(float top_speed,
          float goal_distance,
-         int lane){
+         unsigned int lane){
 
     this->top_speed = (top_speed*1000)/36;         // cm/s
     this->top_acceleration = 449;     // cm/s2
@@ -47,7 +48,7 @@ float Car::get_goal_distance(){
     return goal_distance;
 }
 
-float Car::get_lane(){
+unsigned int Car::get_lane(){
     return lane;
 }
 
@@ -71,7 +72,7 @@ void Car::set_acceleration(float acceleration){
     current_acceleration = acceleration;
 }
 
-void Car::set_lane(unsigned char new_lane){
+void Car::set_lane(unsigned int new_lane){
     lane = new_lane;
 }
 
@@ -105,4 +106,21 @@ void Car::set_car_state(CarState &state){
 int Car::get_unique_id(void){
 	static unsigned int unique_id = 0;
 	return unique_id++;
+}
+
+void Car::print_state(){
+    std::cout << "id " << id
+              << " x=" << current_position << " cm"
+              << " v=" << current_speed << " cm/s"
+              << " a=" << current_acceleration << " cm/s2"
+    		  << " get_top_speed: " << top_speed << " cm/s"
+              << " get_goal_distance: " << goal_distance << " cm"
+              << " get_lane: " <<  lane << std::endl;
+}
+
+CarState Car::get_state(){
+    return CarState(current_position,
+                    current_speed,
+                    current_acceleration,
+                    lane);
 }
