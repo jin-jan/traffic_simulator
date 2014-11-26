@@ -186,8 +186,8 @@ void init_car_population (std::deque<Car>& lane0,
     float car_sane = 0;
     float car_insane = 0;
     float car_crazy = 0;
-    float lane_0 = 0;
-    float lane_1 = 1;
+    unsigned int lane_0 = 0;
+    unsigned int lane_1 = 1;
     float total_sane, total_insane, total_crazy, rand_id_entr, rand_id_exit;
     total_sane   = num_cars*sane;
     total_insane = num_cars*insane;

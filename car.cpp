@@ -6,7 +6,7 @@
 #include "car.hpp"
 
 Car::Car(float top_speed,
-         float lane,
+         unsigned int lane,
          float start_distance,
          float goal_distance){
 
