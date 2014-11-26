@@ -179,7 +179,7 @@ void init_car_population (std::deque<Car>& lane0,
                           std::deque<Car>& lane1,
                           float set_speed,
                           float num_cars){
-    int craziness_speed;
+    float craziness_speed;
     float sane = 0.75;
     float insane = 0.1;
     float crazy = 0.15;
@@ -193,52 +193,52 @@ void init_car_population (std::deque<Car>& lane0,
 
 
     float entrance_allowed[] = {0,
-                                110000,
-                                220000,
-                                327100,
-                                490000,
-                                540000,
-                                629000,
-                                710000,
-                                993000,
-                                1000000};
-    float entrance_prohibited[] = { 75000,
-                                    85000,
-                                    322100,
-                                    350000,
-                                    470000,
-                                    480000,
-                                    500000,
-                                    510000,
-                                    942700,
-                                    950000,
-                                    978500,
-                                    988300,
-                                    1015000};
-    float exit_allowed[] = {100000,
-                            130000,
-                            200000,
-                            290000,
-                            460600,
-                            510000,
-                            745000,
-                            810000,
-                            890000,
-                            971100,
-                            1020000,
-                            1040000};
-    float exit_prohibited[] = { 75000,
-                                85000,
-                                322100,
-                                350000,
-                                470000,
-                                480000,
-                                500000,
-                                942700,
-                                950000,
-                                978500,
-                                988300,
-                                1015000};
+                                1100,
+                                2200,
+                                3271,
+                                4900,
+                                5400,
+                                6290,
+                                7100,
+                                9930,
+                                10000};
+    float entrance_prohibited[] = { 750,
+                                    850,
+                                    3221,
+                                    3500,
+                                    4700,
+                                    4800,
+                                    5000,
+                                    5100,
+                                    9427,
+                                    9500,
+                                    9785,
+                                    9883,
+                                    10150};
+    float exit_allowed[] = {1000,
+                            1300,
+                            2000,
+                            2900,
+                            4606,
+                            5100,
+                            7450,
+                            8100,
+                            8900,
+                            9711,
+                            10200,
+                            10400};
+    float exit_prohibited[] = { 750,
+                                850,
+                                3221,
+                                3500,
+                                4700,
+                                4800,
+                                5000,
+                                9427,
+                                9500,
+                                9785,
+                                9883,
+                                10150};
 
     std::vector<float> entr_all_vector (entrance_allowed, entrance_allowed + sizeof(entrance_allowed)/sizeof(float));
     std::vector<float> entr_pro_vector (entrance_prohibited, entrance_prohibited + sizeof(entrance_prohibited)/sizeof(float));
@@ -254,18 +254,18 @@ void init_car_population (std::deque<Car>& lane0,
     exit.insert(exit.end(), exit_pro_vector.begin(), exit_pro_vector.end());
 
     while( (car_sane < total_sane) ){
-        craziness_speed = (rand() % 100 + 1);
+        craziness_speed = (float)(rand() % 100 + 1);
         rand_id_entr = rand() % entrance.size();
         rand_id_exit = rand() % exit.size();
 
         if ( (car_sane < total_sane) && (craziness_speed < set_speed && craziness_speed > crazy*100)){
-            Car new_car(car_sane, entrance[rand_id_entr],exit[rand_id_exit]);
+            Car new_car(craziness_speed, entrance[rand_id_entr],exit[rand_id_exit]);
             car_sane++;
         }else if ((car_insane < total_insane) && (craziness_speed > set_speed)){
-            Car new_car(car_insane, entrance[rand_id_entr], exit[rand_id_exit]);
+            Car new_car(craziness_speed, entrance[rand_id_entr], exit[rand_id_exit]);
             car_insane++;
         }else if ( (car_crazy <= total_crazy) && (craziness_speed < crazy * 100)){
-            Car new_car(car_crazy, entrance[rand_id_entr], exit[rand_id_exit]);
+            Car new_car(craziness_speed, entrance[rand_id_entr], exit[rand_id_exit]);
             car_crazy++;
         lane0.push_back(new_car);
         lane1.push_front(new_car);

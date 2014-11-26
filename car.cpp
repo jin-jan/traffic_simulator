@@ -13,8 +13,8 @@ Car::Car(float top_speed,
     this->top_acceleration = 449;     // cm/s2
     this->car_length = 400;                        // cm
     this->goal_distance = goal_distance*(100000);  // cm
-    this->start_distance = 0;
-    this->lane = lane;
+    this->start_distance = start_distance;
+    this->lane = 2;
     current_speed = 0;
     current_position = 0;
     current_acceleration = 0;

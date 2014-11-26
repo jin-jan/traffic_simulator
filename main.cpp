@@ -345,6 +345,7 @@ int main(int argc, char **argv){
     lane1.push_back(z);
 */
     init_car_population(lane0, lane1, set_speed, num_cars);
+
     car_simulation(lane0, lane1);
 
     return 0;
