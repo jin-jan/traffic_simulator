@@ -17,15 +17,18 @@ float get_safe_distance(float speed){
     return 2*speed;
 }
 
-bool car_crashes(Car &current, Car &in_front){
-    float distance_to_car = in_front.get_rear_position()-current.get_position();
-    if (distance_to_car < get_safe_distance(current.get_speed()))
+bool car_crashes(Car *current, Car *in_front){
+	if (in_front == nullptr)
+		return false;
+
+    float distance_to_car = in_front->get_rear_position()-current->get_position();
+    if (distance_to_car < get_safe_distance(current->get_speed()))
         return true;
     else
         return false;
 }
 
-bool is_safe_change_lane(Car &in_back, Car &current, Car &in_front){
+bool is_safe_change_lane(Car *in_back, Car *current, Car *in_front){
     if( car_crashes(current, in_front) && car_crashes(in_back, current))
         return false;
     else
@@ -44,10 +47,10 @@ bool is_exit_in_range(){
  * External interface
  *******************************/
 CarState heuristic(std::vector<Car>& new_states,
-                   Car &car,
-                   Car &car_in_front_current,
-                   Car &car_in_front,
-                   Car &car_in_back)
+                   Car *car,
+                   Car *car_in_front_current,
+                   Car *car_in_front,
+                   Car *car_in_back)
 {
     /*
     TODO: add pothele heuristic
@@ -86,8 +89,8 @@ CarState heuristic(std::vector<Car>& new_states,
 
     std::pair<float, CarState> best_state = std::make_pair(-100000.0, CarState(0.0, 0.0, 0.0, 0));
     for(std::vector<Car>::iterator state = new_states.begin(); state != new_states.end(); state++){
-        bool stay_in_current_lane = car.get_lane() == state->get_lane();
-        bool exceed_top_speed = state->get_speed() > car.get_top_speed();
+        bool stay_in_current_lane = car->get_lane() == state->get_lane();
+        bool exceed_top_speed = state->get_speed() > car->get_top_speed();
         float weight = 0.0;
         float factor = 1.0;
         float speed_ratio = 0.0;
@@ -103,8 +106,8 @@ CarState heuristic(std::vector<Car>& new_states,
                 continue;
         }
 
-        speed_ratio = state->get_speed() / car.get_top_speed();
-        position_ratio = state->get_position() / car.get_goal_distance();
+        speed_ratio = state->get_speed() / car->get_top_speed();
+        position_ratio = state->get_position() / car->get_goal_distance();
         weight = factor*(speed_ratio+position_ratio);
 
         // is this state better than the previous one
@@ -119,7 +122,7 @@ CarState heuristic(std::vector<Car>& new_states,
     }
 
     if(best_state.first == -100000.0){
-        std::cerr << "ERROR: heurist unable to find a suitable state." << std::endl;
+        std::cerr << "ERROR: heuristic unable to find a suitable state." << std::endl;
         std::exit(-1);
     }
 

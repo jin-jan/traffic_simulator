@@ -16,6 +16,7 @@ Car::Car(float top_speed,
     current_speed = 0;
     current_position = 0;
     current_acceleration = 0;
+    id = this->get_unique_id();
 }
 
 float Car::get_top_speed(){
@@ -54,6 +55,10 @@ float Car::get_rear_position(){
     return current_position-car_length;
 }
 
+unsigned int Car::get_id(){
+	return id;
+}
+
 void Car::set_speed(float speed){
     current_speed = speed;
 }
@@ -86,4 +91,18 @@ void Car::set_car_length(float new_length){
 
 void Car::set_goal_distance(float new_distance){
     goal_distance = new_distance;
+}
+
+void Car::set_car_state(CarState &state){
+	this->current_position = state.get_position();
+	this->current_speed = state.get_speed();
+	this->current_acceleration = state.get_acceleration();
+	this->lane = state.get_lane();
+}
+
+
+// private method
+int Car::get_unique_id(void){
+	static unsigned int unique_id = 0;
+	return unique_id++;
 }

@@ -7,11 +7,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <limits>
+#include <deque>
 
 #include "car.hpp"
 #include "traffic_simulator.hpp"
 #include "current_car_state.hpp"
-
 
 /*
 Rationale of the default configuration:
@@ -79,50 +79,75 @@ void defaultConfig(void)
     exit(EXIT_FAILURE);
 }
 
-
-void car_simulation(float top_speed,
-                    float goal_distance,
-                    char lane)
-{
-
-    Car a_car(top_speed, goal_distance, lane);
-    std::pair<std::vector<Car>, std::vector<Car> > next_states;
-
-    for(int i=0; i<5; i++){
-
-        next_states = transition_function(a_car);
-
-        auto iter = next_states.first.begin();
-        auto end = next_states.first.end();
-        for(;iter != end; iter++){
-            std::cout << "x=" << iter->get_position()
-                      << " v=" << iter->get_speed()
-                      << " a=" << iter->get_acceleration() << std::endl;
-        }
-        
-        CarState new_state = heuristic(next_states.first);
-        std::cout << std::endl
-                  << "best option:" << std::endl
-                  << "x=" << new_state.get_position()
-                  << " v=" << new_state.get_speed()
-                  << " a=" << new_state.get_acceleration() << std::endl;
-
-        a_car.set_state( new_state.get_position(),
-                         new_state.get_speed(),
-                         new_state.get_acceleration());
-    }
-
-    CarState new_state = heuristic(next_states.first);
+void print_car_state(Car &car){
     std::cout << std::endl
-              << "best option:" << std::endl
-              << "x=" << new_state.get_position()
-              << " v=" << new_state.get_speed()
-              << " a=" << new_state.get_acceleration() << std::endl;
+              << "id " << car.get_id()
+              << " x=" << car.get_position()
+              << " v=" << car.get_speed()
+              << " a=" << car.get_acceleration() << std::endl;
+
     std::cout.precision(5);
-    std::cout << "get_top_speed:" << a_car.get_top_speed() << "\n"
-              << "get_goal_distance:" << a_car.get_goal_distance() << "\n"
-              << "get_lane:" <<  a_car.get_lane() << "\n" << std::endl;
+    std::cout << "get_top_speed:" << car.get_top_speed() << "\n"
+              << "get_goal_distance:" << car.get_goal_distance() << "\n"
+              << "get_lane:" <<  car.get_lane() << "\n" << std::endl;
 }
+
+
+void car_simulation(std::deque<Car> &lane0, std::deque<Car> &lane1)
+{
+	std::deque<Car> future_lane0;
+	std::deque<Car> future_lane1;
+
+	for(int i=0; i < 5; i++){
+            while(!lane0.empty() || !lane1.empty()){
+                    std::pair<std::vector<Car>, std::vector<Car> > next_states;
+
+                    if(!lane0.empty()){
+                            Car car = lane0.front();
+                            lane0.pop_front();
+                            Car *in_front = future_lane0.empty() ? nullptr : &future_lane0.back();
+                            Car *future_in_front = future_lane1.empty() ? nullptr : &future_lane1.back();
+                            Car *future_in_back = lane1.empty() ? nullptr : &lane1.front();
+
+                            next_states = transition_function(car);
+                            CarState new_state = heuristic(next_states.first,
+                                                           &car,
+                                                           in_front,
+                                                           future_in_front,
+                                                           future_in_back);
+                            car.set_car_state(new_state);
+                            if(new_state.get_lane() == 0)
+                                    future_lane0.push_back(car);
+                            else
+                                    future_lane1.push_back(car);
+                            print_car_state(car);
+                    }
+
+                    if(!lane1.empty()){
+                            Car car = lane1.front();
+                            lane1.pop_front();
+                            Car *in_front = future_lane1.empty() ? nullptr : &future_lane1.back();
+                            Car *future_in_front = future_lane0.empty() ? nullptr : &future_lane0.back();
+                            Car *future_in_back = lane0.empty() ? nullptr : &lane0.front();
+
+                            next_states = transition_function(car);
+                            CarState new_state = heuristic(next_states.first,
+                                                           &car,
+                                                           in_front,
+                                                           future_in_front,
+                                                           future_in_back);
+                            car.set_car_state(new_state);
+                            if(new_state.get_lane() == 0)
+                                    future_lane0.push_back(car);
+                            else
+                                    future_lane1.push_back(car);
+                            print_car_state(car);
+                    }
+            }
+		}
+        
+}
+
 
 int main(int argc, char **argv){
     int opt;
@@ -171,9 +196,19 @@ int main(int argc, char **argv){
                 exit(EXIT_FAILURE);
         }
     }
-    car_simulation(set_speed,
-                   set_goal_distance,
-                   set_lane);
+
+    std::deque<Car> lane0;
+    std::deque<Car> lane1;
+    Car slow(50, 10, 0);
+    Car fast(60, 10, 0);
+
+    print_car_state(slow);
+    print_car_state(fast);
+
+    lane0.push_back(slow);
+    lane0.push_back(fast);
+
+    car_simulation(lane0, lane1);
 
     return 0;
 }

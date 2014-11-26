@@ -1,6 +1,8 @@
 #ifndef CAR_H
 #define CAR_H
 
+#include "current_car_state.hpp"
+
 class Car{
     public:
         Car(float top_speed,
@@ -15,6 +17,7 @@ class Car{
         float get_goal_distance();
         float get_lane();
         float get_rear_position();
+        unsigned int get_id();
         void set_speed(float speed);
         void set_position(float position);
         void set_acceleration(float acceleration);
@@ -23,6 +26,7 @@ class Car{
         void set_top_speed(float new_top_speed);
         void set_car_length(float new_length);
         void set_goal_distance(float new_distance);
+        void set_car_state(CarState &state);
 
     private:
         unsigned int id;
@@ -34,6 +38,7 @@ class Car{
         float current_acceleration;
         int lane;
         float goal_distance;
+        int get_unique_id();
 };
 
 #endif
