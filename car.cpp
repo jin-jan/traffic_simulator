@@ -6,6 +6,7 @@
 #include "car.hpp"
 
 Car::Car(float top_speed,
+         float lane,
          float start_distance,
          float goal_distance){
 
@@ -14,7 +15,7 @@ Car::Car(float top_speed,
     this->car_length = 400;                        // cm
     this->goal_distance = goal_distance*(100000);  // cm
     this->start_distance = start_distance;
-    this->lane = 2;
+    this->lane = lane;
     current_speed = 0;
     current_position = 0;
     current_acceleration = 0;

@@ -6,6 +6,7 @@
 class Car{
     public:
         Car(float top_speed,
+            float lane,
             float start_distance,
             float goal_distance);
         float get_top_speed();

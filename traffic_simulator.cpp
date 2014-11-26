@@ -186,6 +186,8 @@ void init_car_population (std::deque<Car>& lane0,
     float car_sane = 0;
     float car_insane = 0;
     float car_crazy = 0;
+    float lane_0 = 0;
+    float lane_1 = 1;
     float total_sane, total_insane, total_crazy, rand_id_entr, rand_id_exit;
     total_sane   = num_cars*sane;
     total_insane = num_cars*insane;
@@ -257,18 +259,26 @@ void init_car_population (std::deque<Car>& lane0,
         craziness_speed = (float)(rand() % 100 + 1);
         rand_id_entr = rand() % entrance.size();
         rand_id_exit = rand() % exit.size();
+        if (entrance[rand_id_entr] > exit[rand_id_exit]){
+            float tmp = exit[rand_id_exit];
+            exit[rand_id_exit] = entrance[rand_id_entr];
+            entrance[rand_id_entr] = tmp;
+        }
 
         if ( (car_sane < total_sane) && (craziness_speed < set_speed && craziness_speed > crazy*100)){
-            Car new_car(craziness_speed, entrance[rand_id_entr],exit[rand_id_exit]);
+            Car new_car_0(craziness_speed, lane_0, entrance[rand_id_entr],exit[rand_id_exit]);
+            Car new_car_1(craziness_speed, lane_1, entrance[rand_id_entr],exit[rand_id_exit]);
             car_sane++;
         }else if ((car_insane < total_insane) && (craziness_speed > set_speed)){
-            Car new_car(craziness_speed, entrance[rand_id_entr], exit[rand_id_exit]);
+            Car new_car_0(craziness_speed, lane_0, entrance[rand_id_entr], exit[rand_id_exit]);
+            Car new_car_1(craziness_speed, lane_1, entrance[rand_id_entr], exit[rand_id_exit]);
             car_insane++;
         }else if ( (car_crazy <= total_crazy) && (craziness_speed < crazy * 100)){
-            Car new_car(craziness_speed, entrance[rand_id_entr], exit[rand_id_exit]);
+            Car new_car_0(craziness_speed, lane_0, entrance[rand_id_entr], exit[rand_id_exit]);
+            Car new_car_1(craziness_speed, lane_1, entrance[rand_id_entr], exit[rand_id_exit]);
             car_crazy++;
-        lane0.push_back(new_car);
-        lane1.push_front(new_car);
+        lane0.push_back(new_car_0);
+        lane1.push_front(new_car_1);
         }
     }
 }
