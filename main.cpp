@@ -215,7 +215,7 @@ void car_simulation(std::deque<Car> &lane0, std::deque<Car> &lane1)
 	std::deque<Car> future_lane0;
 	std::deque<Car> future_lane1;
 
-    for(int i=0; i<50; i++){
+    for(int i=0; i<1800; i++){
         std::cout << i << ": " << std::endl;
         while(!lane0.empty() || !lane1.empty()){
             std::pair<std::vector<Car>, std::vector<Car> > next_states;
@@ -330,6 +330,7 @@ int main(int argc, char **argv){
 
     std::deque<Car> lane0;
     std::deque<Car> lane1;
+/*
     Car slow(20, 10, 0);
     Car fast(40, 10, 0);
     Car m(60, 10, 0);
@@ -347,7 +348,15 @@ int main(int argc, char **argv){
     lane0.push_back(m);
     lane1.push_back(n);
     lane1.push_back(z);
-
+*/
+    for(int i=0; i<1000; i++){
+        float speed = 40 + (std::rand()%20);
+        if(std::rand()%100 < 50){
+            lane0.push_back(Car(speed, 10, 0));
+        }else{
+            lane1.push_back(Car(speed, 10, 1));
+        }
+    }
     car_simulation(lane0, lane1);
 
     return 0;
