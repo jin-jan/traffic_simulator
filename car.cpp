@@ -6,13 +6,14 @@
 #include "car.hpp"
 
 Car::Car(float top_speed,
-         float goal_distance,
-         unsigned int lane){
+         float start_distance,
+         float goal_distance){
 
     this->top_speed = (top_speed*1000)/36;         // cm/s
     this->top_acceleration = 449;     // cm/s2
     this->car_length = 400;                        // cm
     this->goal_distance = goal_distance*(100000);  // cm
+    this->start_distance = 0;
     this->lane = lane;
     current_speed = 0;
     current_position = 0;
@@ -57,7 +58,11 @@ float Car::get_rear_position(){
 }
 
 unsigned int Car::get_id(){
-	return id;
+    return id;
+}
+
+float Car::get_start_distance(){
+    return start_distance;
 }
 
 void Car::set_speed(float speed){
@@ -95,17 +100,20 @@ void Car::set_goal_distance(float new_distance){
 }
 
 void Car::set_car_state(CarState &state){
-	this->current_position = state.get_position();
-	this->current_speed = state.get_speed();
-	this->current_acceleration = state.get_acceleration();
-	this->lane = state.get_lane();
+    this->current_position = state.get_position();
+    this->current_speed = state.get_speed();
+    this->current_acceleration = state.get_acceleration();
+    this->lane = state.get_lane();
 }
 
+void Car::set_start_distance(float new_distance){
+    start_distance = new_distance;
+}
 
 // private method
 int Car::get_unique_id(void){
-	static unsigned int unique_id = 0;
-	return unique_id++;
+    static unsigned int unique_id = 0;
+    return unique_id++;
 }
 
 void Car::print_state(){
@@ -113,7 +121,7 @@ void Car::print_state(){
               << " x=" << current_position << " cm"
               << " v=" << current_speed << " cm/s"
               << " a=" << current_acceleration << " cm/s2"
-    		  << " get_top_speed: " << top_speed << " cm/s"
+              << " get_top_speed: " << top_speed << " cm/s"
               << " get_goal_distance: " << goal_distance << " cm"
               << " get_lane: " <<  lane << std::endl;
 }

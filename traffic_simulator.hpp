@@ -14,5 +14,9 @@ CarState heuristic(std::vector<Car>& new_states,
 float transition();
 float traffic_simulation();
 std::pair<std::vector<Car>, std::vector<Car> > transition_function(Car state);
+void init_car_population(std::deque<Car>& lane0,
+                         std::deque<Car>& lane1,
+                         float set_speed,
+                         float num_cars);
 
 #endif

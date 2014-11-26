@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <limits>
 #include <deque>
+#include <cstdlib>
 
 #include "car.hpp"
 #include "traffic_simulator.hpp"
@@ -57,7 +58,6 @@ void helpOutput(void)
                  "-c CARS    Set the number of CARS to simulate\n"
                  "-s SPEED   Set the maximun SPEED (km/h)\n"
                  "-d GOAL    Set the goal distance km\n"
-                 "-l LANE    Set the number of lanes\n"
                  "-t LIGHT   Set the number of traffic LIGHTs to simulate\n"
                  "-p POTHELE Set the number of POTHELEs to simulate\n"
                  "-h         Display the help information\n" << std::endl;
@@ -212,8 +212,8 @@ int get_future_cars_in_lane(Car &car, std::deque<Car> &front_lane, std::deque<Ca
 
 void car_simulation(std::deque<Car> &lane0, std::deque<Car> &lane1)
 {
-	std::deque<Car> future_lane0;
-	std::deque<Car> future_lane1;
+    std::deque<Car> future_lane0;
+    std::deque<Car> future_lane1;
 
     for(int i=0; i<1800; i++){
         std::cout << i << ": " << std::endl;
@@ -284,12 +284,11 @@ int main(int argc, char **argv){
     int opt;
     float set_speed         =   60; //top_speed
     float set_goal_distance =   10.4; //goal_distance
-    int set_lane            =    0; //lane
     unsigned char num_sem   =    0;
     unsigned char num_po    =    0;
-    int num_cars  = 2500;
+    float num_cars  = 2500;
 
-    while ((opt = getopt(argc, argv, "hc:s:d:l:t:p:")) !=  -1)
+    while ((opt = getopt(argc, argv, "hc:s:d:t:p:")) !=  -1)
     {
         switch (opt)
         {
@@ -298,7 +297,7 @@ int main(int argc, char **argv){
                 defaultConfig();
                 break;
             case 'c':
-                num_cars = static_cast<unsigned char>(*optarg);
+                num_cars = atoi(optarg);
                 std::cout << "-c  " << num_cars << std::endl;
                 break;
             case 's':
@@ -309,10 +308,6 @@ int main(int argc, char **argv){
                 set_goal_distance = atof(optarg);
                 std::cout << "-d " << set_goal_distance << std::endl;
                 break;
-            case 'l':
-                set_lane = atoi(optarg);
-                std::cout << "-l " << set_lane << std::endl;
-                break;
             case 't':
                 num_sem = static_cast<unsigned char>(*optarg);
                 std::cout << "-t" << num_sem << std::endl;
@@ -322,7 +317,7 @@ int main(int argc, char **argv){
                 std::cout << "-p " << num_po << std::endl;
                 break;
             default:
-                fprintf(stderr, "Usage: %s [-c] [-s] [-d] [-l] [-t] [-p] [-h]",
+                fprintf(stderr, "Usage: %s [-c] [-s] [-d] [-t] [-p] [-h]",
                         argv[0]);
                 exit(EXIT_FAILURE);
         }
@@ -349,14 +344,7 @@ int main(int argc, char **argv){
     lane1.push_back(n);
     lane1.push_back(z);
 */
-    for(int i=0; i<1000; i++){
-        float speed = 40 + (std::rand()%20);
-        if(std::rand()%100 < 50){
-            lane0.push_back(Car(speed, 10, 0));
-        }else{
-            lane1.push_back(Car(speed, 10, 1));
-        }
-    }
+    init_car_population(lane0, lane1, set_speed, num_cars);
     car_simulation(lane0, lane1);
 
     return 0;

@@ -6,8 +6,8 @@
 class Car{
     public:
         Car(float top_speed,
-            float goal_distance,
-            unsigned int lane);
+            float start_distance,
+            float goal_distance);
         float get_top_speed();
         float get_top_acceleration();
         float get_speed();
@@ -18,6 +18,7 @@ class Car{
         unsigned int get_lane();
         float get_rear_position();
         unsigned int get_id();
+        float get_start_distance();
         void set_speed(float speed);
         void set_position(float position);
         void set_acceleration(float acceleration);
@@ -28,6 +29,7 @@ class Car{
         void set_goal_distance(float new_distance);
         void set_car_state(CarState &state);
         void print_state();
+        void set_start_distance(float new_distance);
         CarState get_state();
 
     private:
@@ -41,6 +43,7 @@ class Car{
         unsigned int lane;
         float goal_distance;
         int get_unique_id();
+        float start_distance;
 };
 
 #endif
