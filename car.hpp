@@ -1,3 +1,5 @@
+#include <fstream>
+
 #ifndef CAR_H
 #define CAR_H
 
@@ -27,7 +29,7 @@ class Car{
         void set_car_length(float new_length);
         void set_goal_distance(float new_distance);
         void set_car_state(CarState &state);
-        void print_state();
+        void print_state(std::ofstream &csv_file);
         CarState get_state();
 
     private:

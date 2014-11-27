@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <limits>
 #include <deque>
+#include <fstream>
 
 #include "car.hpp"
 #include "traffic_simulator.hpp"
@@ -212,11 +213,13 @@ int get_future_cars_in_lane(Car &car, std::deque<Car> &front_lane, std::deque<Ca
 
 void car_simulation(std::deque<Car> &lane0, std::deque<Car> &lane1)
 {
+    std::ofstream simluation_results;
+    simluation_results.open("simulation_2500_1800.csv");
 	std::deque<Car> future_lane0;
 	std::deque<Car> future_lane1;
 
     for(int i=0; i<1800; i++){
-        std::cout << i << ": " << std::endl;
+//        std::cout << i << ": " << std::endl;
         while(!lane0.empty() || !lane1.empty()){
             std::pair<std::vector<Car>, std::vector<Car> > next_states;
 
@@ -242,7 +245,7 @@ void car_simulation(std::deque<Car> &lane0, std::deque<Car> &lane1)
                 else
                     switch_lane(car, future_lane1);
                     //future_lane1.push_back(car);
-                car.print_state();
+                car.print_state(simluation_results);
             }
 
             if(!lane1.empty()){
@@ -267,7 +270,7 @@ void car_simulation(std::deque<Car> &lane0, std::deque<Car> &lane1)
                     //future_lane0.push_back(car);
                 else
                     future_lane1.push_back(car);
-                car.print_state();
+                car.print_state(simluation_results);
             }
 
         }
@@ -277,6 +280,7 @@ void car_simulation(std::deque<Car> &lane0, std::deque<Car> &lane1)
     future_lane0.clear();
     future_lane1.clear();
     }
+    simluation_results.close();
 }
 
 
@@ -349,7 +353,7 @@ int main(int argc, char **argv){
     lane1.push_back(n);
     lane1.push_back(z);
 */
-    for(int i=0; i<1000; i++){
+    for(int i=0; i<2500; i++){
         float speed = 40 + (std::rand()%20);
         if(std::rand()%100 < 50){
             lane0.push_back(Car(speed, 10, 0));

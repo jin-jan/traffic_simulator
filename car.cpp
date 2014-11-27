@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
 #include <cmath>
-#include <iostream>
+#include <fstream>
 
 #include "car.hpp"
 
@@ -108,14 +108,14 @@ int Car::get_unique_id(void){
 	return unique_id++;
 }
 
-void Car::print_state(){
-    std::cout << "id " << id
-              << " x=" << current_position << " cm"
-              << " v=" << current_speed << " cm/s"
-              << " a=" << current_acceleration << " cm/s2"
-    		  << " get_top_speed: " << top_speed << " cm/s"
-              << " get_goal_distance: " << goal_distance << " cm"
-              << " get_lane: " <<  lane << std::endl;
+void Car::print_state(std::ofstream &csv_file){
+    csv_file  << id << ", "                        // car's id
+              << lane << ", "
+              << current_position << ", "
+              << current_speed << ", "
+              << current_acceleration << ", "
+              << top_speed << ", "
+              << goal_distance << ", " << std::endl;
 }
 
 CarState Car::get_state(){
